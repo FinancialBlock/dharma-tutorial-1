@@ -6,7 +6,7 @@
         "dharma-chain": "1.0.8"
     },
     "dependencies": {
-        "@dharmaprotocol/dharma.js": "0.1.15",
+        "@dharmaprotocol/dharma.js": "0.1.62",
         "react": "^16.4.1",
         "react-dom": "^16.4.1",
         "react-scripts": "1.1.4"
