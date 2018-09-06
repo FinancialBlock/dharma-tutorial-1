@@ -45,11 +45,16 @@ export default class App extends Component {
 
         const debtorAddressString = accounts[0];
 
+        // replace with relayer address
+        const relayerAddressString = "0x0000000000000000000000000000000000000000";
+
         const loanRequest = await LoanRequest.create(dharma, {
             principalAmount: principal,
             principalToken: "WETH",
             collateralAmount: collateral,
             collateralToken: "REP",
+            relayerAddress: relayerAddressString,
+            relayerFeeAmount: 0.5,
             interestRate: interestRate,
             termDuration: termLength,
             termUnit: "months",
@@ -57,6 +62,9 @@ export default class App extends Component {
             expiresInDuration: expiration,
             expiresInUnit: "weeks"
         });
+
+        // by default, uses the default account
+        await loanRequest.signAsDebtor();
 
         this.setState({
             isAwaitingBlockchain: false
