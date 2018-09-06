@@ -1,3 +1,7 @@
+/*
+ * Create a DebtOrder and send it to any Relayer that supports the Standard Relayer API
+ */
+
 import React, { Component } from "react";
 
 import { RequestLoanForm } from "../RequestLoanForm/RequestLoanForm";
@@ -6,11 +10,8 @@ import "./App.css";
 
 import Dharma from "@dharmaprotocol/dharma.js";
 
-/*
- * Step 1:
- * Instantiate a new instance of Dharma, passing in the host of the local blockchain.
- */
-const dharma = null; // fix this line
+// Instantiating Dharma this way will detect Web3 on the window (i.e., Metamask)
+const dharma = new Dharma();
 
 export default class App extends Component {
     constructor(props) {
@@ -32,11 +33,7 @@ export default class App extends Component {
 
         const { principal, collateral, expiration, termLength, interestRate } = formData;
 
-        /*
-         * Step 2:
-         * Fetch the current accounts from the blockchain.
-         */
-        const accounts = null; // fix this line
+        const accounts = await dharma.blockchain.getAccounts();
 
         if (!accounts) {
             console.error("No acccounts detected from web3 -- ensure a local blockchain is running.");
@@ -48,21 +45,28 @@ export default class App extends Component {
 
         const debtorAddressString = accounts[0];
 
-        /*
-         * Step 3:
-         * Create a Dharma Debt Order when the form is submitted by the user.
-         */
-        const loanRequest = null; // fix this line
+        const loanRequest = await LoanRequest.create(dharma, {
+            principalAmount: principal,
+            principalToken: "WETH",
+            collateralAmount: collateral,
+            collateralToken: "REP",
+            interestRate: interestRate,
+            termDuration: termLength,
+            termUnit: "months",
+            debtorAddress: debtorAddressString,
+            expiresInDuration: expiration,
+            expiresInUnit: "weeks"
+        });
 
         this.setState({
             isAwaitingBlockchain: false
         });
 
         /*
-         * Step 4:
-         * Log the JSON representation of the newly created debt order to the console.
+         * Originate the loan:
+         * Send the DebtOrder to any Relayer that supports the Standard Relayer API.
          */
-        console.log();
+        console.log(loanRequest.toJSON());
     }
 
     render() {
